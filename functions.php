@@ -1,4 +1,5 @@
 <?php
+
 /**
  * functions.php
  *
@@ -57,10 +58,10 @@ function themeConfig($form)
     }
 
     echo '<p id="void-check-update" class="notice">正在检查更新……</p>';
-    echo '<script>var VOIDVersion='.$GLOBALS['VOIDVersion'].'</script>';
-    echo '<script src="'.Helper::options()->themeUrl.'/assets/check_update.js"></script>';
+    echo '<script>var VOIDVersion=' . $GLOBALS['VOIDVersion'] . '</script>';
+    echo '<script src="' . Helper::options()->themeUrl . '/assets/check_update-9eb5c4cc00.js"></script>';
 
-    $defaultBanner = new Typecho_Widget_Helper_Form_Element_Text('defaultBanner', null, '', '首页顶部大图', '可以填写随机图 API。');
+    $defaultBanner = new Typecho_Widget_Helper_Form_Element_Textarea('defaultBanner', null, '', '首页顶部大图', '可以填写随机图 API。');
     $form->addInput($defaultBanner);
     $indexBannerTitle = new Typecho_Widget_Helper_Form_Element_Text('indexBannerTitle', null, '', '首页顶部大标题', '不要太长');
     $form->addInput($indexBannerTitle);
@@ -72,7 +73,8 @@ function themeConfig($form)
 
     $indexStyle = new Typecho_Widget_Helper_Form_Element_Radio('indexStyle', array(
         '0' => '双栏',
-        '1' => '单栏'), '0', '首页版式', '选择单栏或者双栏瀑布流');
+        '1' => '单栏'
+    ), '0', '首页版式', '选择单栏或者双栏瀑布流');
     $form->addInput($indexStyle);
 
     // 高级设置
@@ -96,7 +98,7 @@ function themeConfig($form)
     $form->addInput($serviceworker);
 
     // 超高级设置
-    $advance = new Typecho_Widget_Helper_Form_Element_Textarea('advance', null, null, 超高级设置, '主题中包含一份 advanceSetting.sample.json，自己仿照着写吧。');
+    $advance = new Typecho_Widget_Helper_Form_Element_Textarea('advance', null, null, "超高级设置", '主题中包含一份 advanceSetting.sample.json，自己仿照着写吧。');
     $form->addInput($advance);
 }
 
@@ -112,7 +114,8 @@ function themeFields(Typecho_Widget_Helper_Layout $layout)
     $bannerStyle = new Typecho_Widget_Helper_Form_Element_Select('bannerStyle', array(
         0 => '显示在顶部',
         1 => '显示在顶部并添加模糊效果',
-        2 => '不显示'), 0, '文章主图样式', '');
+        2 => '不显示'
+    ), 0, '文章主图样式', '');
     $layout->addItem($bannerStyle);
     $bannerascover = new Typecho_Widget_Helper_Form_Element_Select('bannerascover', array('1' => '主图显示在标题上方', '2' => '主图作为标题背景', '0' => '不显示'), '1', '首页主图样式', '主图作为标题背景时会添加暗色遮罩，但仍然建议仅对暗色的主图采用该方式展示。否则请选择「主图显示在标题上方」。');
     $layout->addItem($bannerascover);
@@ -125,3 +128,17 @@ function themeFields(Typecho_Widget_Helper_Layout $layout)
 }
 
 $GLOBALS['VOIDSetting'] = Utils::getVOIDSettings();
+
+function getRandomBanner()
+{
+    $setting = $GLOBALS['VOIDSetting'];
+    if ($setting['defaultBanner']) {
+        $str = $setting['defaultBanner'];
+        $imgs = trim($str);
+        $urls = explode("\r\n", $imgs);
+        $n = mt_rand(0, count($urls) - 1);
+        return $urls[$n];
+    } else {
+        return '';
+    }
+}
