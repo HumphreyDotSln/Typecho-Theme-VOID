@@ -63,17 +63,19 @@
                     <?php if ($setting['nav']) {
                         foreach ($setting['nav'] as $listItem) : ?>
                             <?php if (isset($listItem['link'])) : ?>
-                                <?php $target = isset($item['target']) ? $item['target'] : '_blank';
-                                echo "<span class='dropdown' href='{$item['link']}' target='{$target}'>"; ?>
+                                <?php $target = isset($listItem['target']) ? $listItem['target'] : '_blank';
+                                echo "<span class='dropdown' href='{$listItem['link']}' target='{$target}'>{$listItem['name']}"; ?>
                             <?php else : ?>
                                 <span class="dropdown"><?php echo $listItem['name']; ?>
+                                <?php endif;
+                            if (isset($listItem['items'])) : ?>
+                                    <ul>
+                                        <?php foreach ($listItem['items'] as $item) {
+                                            $target = isset($item['target']) ? $item['target'] : '_blank';
+                                            echo "<li><a target=\"{$target}\" href=\"{$item['link']}\">{$item['title']}</a></li>";
+                                        } ?>
+                                    </ul>
                                 <?php endif; ?>
-                                <ul>
-                                    <?php foreach ($listItem['items'] as $item) {
-                                        $target = isset($item['target']) ? $item['target'] : '_blank';
-                                        echo "<li><a target=\"{$target}\" href=\"{$item['link']}\">{$item['title']}</a></li>";
-                                    } ?>
-                                </ul>
                                 </span>
                         <?php endforeach;
                     } ?>
@@ -108,15 +110,21 @@
             </section>
             <?php if ($setting['nav']) {
                 foreach ($setting['nav'] as $listItem) : ?>
-                    <section data-title="<?php echo $listItem['name']; ?>">
-                        <nav>
-                            <?php foreach ($listItem['items'] as $item) {
-                                $target = '_blank';
-                                if (isset($item['target'])) $target = $item['target'];
-                                echo "<a target=\"{$target}\" href=\"{$item['link']}\">{$item['title']}</a>";
-                            } ?>
-                        </nav>
-                    </section>
-            <?php endforeach;
+                    <?php if (isset($listItem['link'])) : ?>
+                        <?php $target = isset($listItem['target']) ? $listItem['target'] : '_blank';
+                        echo "<span class='dropdown' href='{$listItem['link']}' target='{$target}'>{$listItem['name']}"; ?>
+                    <?php else : ?>
+                        <span class="dropdown"><?php echo $listItem['name']; ?>
+                        <?php endif;
+                    if (isset($listItem['items'])) : ?>
+                            <ul>
+                                <?php foreach ($listItem['items'] as $item) {
+                                    $target = isset($item['target']) ? $item['target'] : '_blank';
+                                    echo "<li><a target=\"{$target}\" href=\"{$item['link']}\">{$item['title']}</a></li>";
+                                } ?>
+                            </ul>
+                        <?php endif; ?>
+                        </span>
+                <?php endforeach;
             } ?>
         </div>

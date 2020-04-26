@@ -13,7 +13,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 }
 
 // 看不见错误就是没有错误
-error_reporting(0);
+error_reporting(E_ERROR);
 
 require_once('libs/Utils.php');
 require_once('libs/Contents.php');
