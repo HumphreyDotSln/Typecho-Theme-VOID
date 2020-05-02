@@ -64,7 +64,7 @@
                         foreach ($setting['nav'] as $listItem) : ?>
                             <?php if (isset($listItem['link'])) : ?>
                                 <?php $target = isset($listItem['target']) ? $listItem['target'] : '_blank';
-                                echo "<span class='dropdown' href='{$listItem['link']}' target='{$target}'>{$listItem['name']}"; ?>
+                                echo "<span class='dropdown'><a href='{$listItem['link']}' target={$listItem['target']} class='pjax'>{$listItem['name']}</a>"; ?>
                             <?php else : ?>
                                 <span class="dropdown"><?php echo $listItem['name']; ?>
                                 <?php endif;
@@ -72,7 +72,7 @@
                                     <ul>
                                         <?php foreach ($listItem['items'] as $item) {
                                             $target = isset($item['target']) ? $item['target'] : '_blank';
-                                            echo "<li><a target=\"{$target}\" href=\"{$item['link']}\">{$item['title']}</a></li>";
+                                            echo "<li><a target=\"{$target}\" href=\"{$item['link']}\" class='pjax'>{$item['title']}</a></li>";
                                         } ?>
                                     </ul>
                                 <?php endif; ?>
@@ -112,7 +112,7 @@
                 foreach ($setting['nav'] as $listItem) : ?>
                     <?php if (isset($listItem['link'])) : ?>
                         <?php $target = isset($listItem['target']) ? $listItem['target'] : '_blank';
-                        echo "<span class='dropdown' href='{$listItem['link']}' target='{$target}'>{$listItem['name']}"; ?>
+                        echo "<span class='dropdown'><a href='{$listItem['link']}' target={$listItem['target']} class='pjax'>{$listItem['name']}</a>"; ?>
                     <?php else : ?>
                         <span class="dropdown"><?php echo $listItem['name']; ?>
                         <?php endif;
@@ -120,7 +120,7 @@
                             <ul>
                                 <?php foreach ($listItem['items'] as $item) {
                                     $target = isset($item['target']) ? $item['target'] : '_blank';
-                                    echo "<li><a target=\"{$target}\" href=\"{$item['link']}\">{$item['title']}</a></li>";
+                                    echo "<li><a target=\"{$target}\" href=\"{$item['link']}\" class='pjax'>{$item['title']}</a></li>";
                                 } ?>
                             </ul>
                         <?php endif; ?>

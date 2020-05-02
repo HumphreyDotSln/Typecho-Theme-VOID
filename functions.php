@@ -142,3 +142,112 @@ function getRandomBanner()
         return '';
     }
 }
+
+
+//获得读者墙
+function getFriendWall()
+{
+    $db = Typecho_Db::get();
+    $sql = $db->select('COUNT(author) AS cnt', 'author', 'url', 'mail')
+        ->from('table.comments')
+        ->where('status = ?', 'approved')
+        ->where('type = ?', 'comment')
+        ->where('authorId = ?', '0')
+        ->where('mail != ?', 'humphrey.sln@outlook.com')   //排除自己上墙
+        ->group('author')
+        ->order('cnt', Typecho_Db::SORT_DESC)
+        ->limit('12');
+    //读取几位用户的信息
+    $result = $db->fetchAll($sql);
+    if (count($result) > 0) {
+        $mostactive = "";
+        $option = Typecho_Widget::widget('Widget_Options')->plugin('GravatarCache');
+        //载入缓存头像插件作判断条件
+        $avatar = "";
+        $color = array("#ee2c79", "#5cb3cc", "#fed71a");
+        $guestDes = "";
+        $echoCount = 0;
+        $mostactive = "<center><h1>评论排行榜</h1></center>";
+        $mostactive .= '<div class="row">';
+        foreach ($result as $value) {
+            $specialColor = "";
+            if ($echoCount < 3) {
+                $specialColor = $color[$echoCount % 3]; //前三位颜色
+            }
+            $avatar = getAvatar($value['mail']);
+            if (trim($value['url']) == "") {
+                $guestDes = "一位热心的网友路过";
+            } else {
+                $guestDes = $value['url'];
+            }
+            $mostactive .= <<<EOF
+            <div class="col-sm-6">
+                <a href="{$value['url']}" title="{$guestDes}" target="_blank">
+                    <div class="link-item">
+                        <img class="link-avatar" src="{$avatar}" style="width:100px">
+                        <span class="iconfont icon-aria-username link-name">
+                            {$value['author']}
+                            <span style="color:{$specialColor};text-align:right">
+                                {$value['cnt']}
+                            </span>
+                        </span>
+                    </div>
+                </a>
+            </div>
+EOF;
+            $echoCount++;
+        }
+        $mostactive .= '</div>';
+        $mostactive .= '<br>';
+        echo $mostactive;
+    }
+    $sql_just = $db->select('COUNT(author) AS cnt', 'author', 'max(url) url', 'max(mail) mail')
+        ->from('table.comments')
+        ->where('status = ?', 'approved')
+        ->where('type = ?', 'comment')
+        ->where('authorId = ?', '0')
+        ->where('mail != ?', $option->socialemail)   //排除自己上墙
+        ->group('author')
+        ->order('cnt', Typecho_Db::SORT_DESC)
+        ->limit('10');    //读取几位用户的信息
+    $result_just = $db->fetchAll($sql_just);
+    if (count($result_just) > 0) {
+        echo '<center><h1>这些人刚刚评论过我</h1></center>';
+        $echoCount = 0;
+        $justComment = '<div class="m-b m-t-lg">';
+        $color = array("on", "busy", "away", "off");
+        foreach ($result_just as $value) {
+            if ($echoCount > 10)
+                break;
+            $avatar = getAvatar($value['mail']);
+            $justComment .= <<<EOF
+            		<div href="{$value['url']}" class="col-sm-6">
+        				<img src="{$avatar}" title="{$value['author']}" class="round-avatar">
+        			</div>
+EOF;
+            $echoCount++;
+        }
+        $justComment .= '</div>';
+        echo $justComment;
+    }
+}
+
+function getAvatar($number)
+{
+    if (preg_match('|^[1-9]\d{4,11}@qq\.com$|i', $number)) {
+        return "https://q2.qlogo.cn/headimg_dl?bs=" . $number . "&dst_uin=" . $number . "&dst_uin=" . $number . "&;dst_uin=" . $number . "&spec=100&url_enc=0&referer=bu_interface&term_type=PC";
+    } else {
+        //调用缓存头像，路径看插件设置
+        $option = Typecho_Widget::widget('Widget_Options')->plugin('GravatarCache');
+        $avatar = $option->dir;
+        if (file_exists($_SERVER['DOCUMENT_ROOT'] . $option->dir . '' . md5(strtolower($number)) . '.jpg')) {
+            $avatar .= md5(strtolower($number));
+            //输出缓存头像，网上版本上一行多了一个“/”
+        } else {
+            $avatar .= 'default';
+            //不存在缓存头像，则输出默认头像
+        }
+        $avatar .= '.jpg';
+        return $avatar;
+    }
+}
